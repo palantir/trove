@@ -13,7 +13,7 @@ Original source code for this library available at:
 
 [http://sourceforge.net/projects/trove4j/files/trove/3.0.3/trove-3.0.3.tar.gz/download](http://sourceforge.net/projects/trove4j/files/trove/3.0.3/trove-3.0.3.tar.gz/download)
 
-[put]: http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#put(K, V)
+[put]: http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#put(K,%20V)
 [remove]: http://docs.oracle.com/javase/6/docs/api/java/util/Map.html#remove(java.lang.Object)
 
 This release made available under the LGPL version 2.1 - see [LICENSE](https://github.com/palantirtech/trove-3.0.3/blob/master/LICENSE)
