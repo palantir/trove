@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="/ivy-doc.xsl"?><ivy-module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.4" xsi:noNamespaceSchemaLocation="http://incubator.apache.org/ivy/schemas/ivy.xsd">
+
+   <info organisation="palantir" module="pttrove"/>
+   <configurations>
+        <conf name="default" description="pttrove"/>
+        <conf name="test" extends="default"/>
+    </configurations>
+    <publications>
+        <artifact name="pttrove" type="jar" conf="default"/>
+        <artifact name="pttrove" type="source" ext="zip" conf="default"/>
+    </publications>
+      <dependencies>
+         <!-- External Dependencies -->
+        <dependency org="junit" name="junit" rev="4.11" conf="test-&gt;default"/>
+      </dependencies>
+</ivy-module>
