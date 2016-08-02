@@ -310,6 +310,9 @@ public class T#K##V#HashMap extends T#K##V#Hash implements T#K##V#Map, Externali
     @Override
     public #k#[] keys() {
         #k#[] keys = new #k#[size()];
+        if ( keys.length == 0 ) {
+            return keys;        // nothing to copy
+        }
         #k#[] k = _set;
         byte[] states = _states;
 
@@ -326,6 +329,9 @@ public class T#K##V#HashMap extends T#K##V#Hash implements T#K##V#Map, Externali
     @Override
     public #k#[] keys( #k#[] array ) {
         int size = size();
+        if ( size == 0 ) {
+            return array;       // nothing to copy
+        }
         if ( array.length < size ) {
             array = new #k#[size];
         }
@@ -353,6 +359,9 @@ public class T#K##V#HashMap extends T#K##V#Hash implements T#K##V#Map, Externali
     @Override
     public #v#[] values() {
         #v#[] vals = new #v#[size()];
+        if ( vals.length == 0 ) {
+            return vals;        // nothing to copy
+        }
         #v#[] v = _values;
         byte[] states = _states;
 
@@ -369,6 +378,9 @@ public class T#K##V#HashMap extends T#K##V#Hash implements T#K##V#Map, Externali
     @Override
     public #v#[] values( #v#[] array ) {
         int size = size();
+        if ( size == 0 ) {
+            return array;       // nothing to copy
+        }
         if ( array.length < size ) {
             array = new #v#[size];
         }
