@@ -1,6 +1,8 @@
 package gnu.trove.array;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.atomic.AtomicLong;
@@ -41,8 +43,13 @@ public abstract class AbstractOffheapArray {
      * offheap array becomes unreachable.
      * <p>
      * http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/sun/misc/Cleaner.java
+     *
+     * Need to keep it as a generic Object so that it can be assigned a type at runtime using reflection.
+     * Unfortunately, starting with Java 9, sun.misc.Cleaner moved to jdk.internal.ref.Cleaner, so in
+     * order for this library to be usable for both Java 8 and Java 9+, it must be able to decide which
+     * to use at runtime.
      */
-    private final Cleaner cleaner;
+    private final Object cleaner;
     private final AtomicLong boxedAddress;
     protected long address;
     protected long capacity;
@@ -53,9 +60,39 @@ public abstract class AbstractOffheapArray {
         }
         address = UNSAFE.allocateMemory(capacity);
         boxedAddress = new AtomicLong(address);
-        cleaner = Cleaner.create(this, new Deallocator(boxedAddress));
+        cleaner = createCleaner(this, new Deallocator(boxedAddress));
         UNSAFE.setMemory(address, capacity, (byte) 0);
         this.capacity = capacity;
+    }
+
+    private static Object createCleaner(Object obj, Runnable cleanUpRunnable) {
+        try {
+            Class<?> cleaner = Class.forName("sun.misc.Cleaner");
+            Method create = cleaner.getMethod("create", Object.class, Runnable.class);
+            return create.invoke(null, obj, cleanUpRunnable);
+        } catch (ClassNotFoundException e) {
+            // means we are on java 9+
+        } catch (NoSuchMethodException e) {
+            // shouldn't happen, will try using java 9+ cleaner anyway
+        } catch (IllegalAccessException e) {
+            // shouldn't happen, will try using java 9+ cleaner anyway
+        } catch (InvocationTargetException e) {
+            // shouldn't happen, will try using java 9+ cleaner anyway
+        }
+
+        try {
+            Class<?> cleaner = Class.forName("jdk.internal.ref.Cleaner");
+            Method create = cleaner.getMethod("create", Object.class, Runnable.class);
+            return create.invoke(null, obj, cleanUpRunnable);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        }
     }
 
     protected void resize(long newCapacity) {
@@ -90,8 +127,38 @@ public abstract class AbstractOffheapArray {
 
         // Cleaner is guaranteed to run its runnable at most once, so its fine to
         // call free multiple times, and nothing additional will happen when this
-        // array becomes unreachable.
-        cleaner.clean();
+        // array becomes unreachable.`
+        clean();
+    }
+
+    private void clean() {
+        try {
+            Class<?> cleanerClass = Class.forName("sun.misc.Cleaner");
+            Method clean = cleanerClass.getMethod("clean");
+            clean.invoke(cleaner);
+        } catch (ClassNotFoundException e) {
+            // means we are on java 9+
+        } catch (NoSuchMethodException e) {
+            // shouldn't happen, will try using java 9+ cleaner anyway
+        } catch (IllegalAccessException e) {
+            // shouldn't happen, will try using java 9+ cleaner anyway
+        } catch (InvocationTargetException e) {
+            // shouldn't happen, will try using java 9+ cleaner anyway
+        }
+
+        try {
+            Class<?> cleanerClass = Class.forName("jdk.internal.ref.Cleaner");
+            Method clean = cleanerClass.getMethod("clean");
+            clean.invoke(cleaner);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        } catch (InvocationTargetException e) {
+            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+        }
     }
 
     public abstract long capacity();
