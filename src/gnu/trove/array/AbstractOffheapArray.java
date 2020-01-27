@@ -98,7 +98,7 @@ public abstract class AbstractOffheapArray {
 
         // Cleaner is guaranteed to run its runnable at most once, so its fine to
         // call free multiple times, and nothing additional will happen when this
-        // array becomes unreachable.`
+        // array becomes unreachable.
         clean();
     }
 
