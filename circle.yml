@@ -1,9 +1,0 @@
-machine:
-  java:
-    version: oraclejdk8
-
-test:
-  override:
-    - ant -f build.xml clean
-    - ant -f build.xml generate
-    - ant -f build.xml jar
