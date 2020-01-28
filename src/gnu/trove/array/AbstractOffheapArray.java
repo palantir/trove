@@ -18,6 +18,9 @@ import sun.misc.Unsafe;
 public abstract class AbstractOffheapArray {
     protected static final Unsafe UNSAFE;
 
+    private static final Method createMethod = initializeCreateMethod();
+    private static final Method cleanMethod = initializeCleanMethod();
+
     private static class Deallocator implements Runnable {
 
         private final AtomicLong boxedAddress;
@@ -51,9 +54,6 @@ public abstract class AbstractOffheapArray {
     private final AtomicLong boxedAddress;
     protected long address;
     protected long capacity;
-
-    private static Method createMethod = null;
-    private static Method cleanMethod = null;
 
     public AbstractOffheapArray(long capacity) {
         if (capacity < 0) {
@@ -152,8 +152,9 @@ public abstract class AbstractOffheapArray {
 
     private static Object createCleaner(Object obj, Runnable cleanUpRunnable) {
         if (createMethod == null) {
-            initializeCreateMethod();
+            throw new IllegalStateException("Was not able to find Cleaner#create method to use.");
         }
+
         try {
             return createMethod.invoke(null, obj, cleanUpRunnable);
         } catch (ReflectiveOperationException e) {
@@ -161,31 +162,11 @@ public abstract class AbstractOffheapArray {
         }
     }
 
-    private static synchronized void initializeCreateMethod() {
-        if (createMethod != null) {
-            return;
-        }
-
-        try {
-            Class<?> cleaner = Class.forName("sun.misc.Cleaner");
-            createMethod = cleaner.getMethod("create", Object.class, Runnable.class);
-            return;
-        } catch (ReflectiveOperationException e) {
-            // means we are on java 9+, try different class
-        }
-
-        try {
-            Class<?> cleaner = Class.forName("jdk.internal.ref.Cleaner");
-            createMethod = cleaner.getMethod("create", Object.class, Runnable.class);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Cannot find Cleaner to use.", e);
-        }
-    }
-
     private void clean() {
         if (cleanMethod == null) {
-            initializeCleanMethod();
+            throw new IllegalStateException("Was not able to find Cleaner#clean to use.");
         }
+
         try {
             cleanMethod.invoke(cleaner);
         } catch (ReflectiveOperationException e) {
@@ -193,24 +174,35 @@ public abstract class AbstractOffheapArray {
         }
     }
 
-    private static synchronized void initializeCleanMethod() {
-        if (cleanMethod != null) {
-            return;
+    private static Method initializeCreateMethod() {
+        try {
+            Class<?> cleaner = Class.forName("sun.misc.Cleaner");
+            return cleaner.getMethod("create", Object.class, Runnable.class);
+        } catch (ReflectiveOperationException e) {
+            // means we are on java 9+, try different class
         }
 
         try {
+            Class<?> cleaner = Class.forName("jdk.internal.ref.Cleaner");
+            return cleaner.getMethod("create", Object.class, Runnable.class);
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
+    private static Method initializeCleanMethod() {
+        try {
             Class<?> cleanerClass = Class.forName("sun.misc.Cleaner");
-            cleanMethod = cleanerClass.getMethod("clean");
-            return;
+            return cleanerClass.getMethod("clean");
         } catch (ReflectiveOperationException e) {
             // means we are on java 9+, try different class
         }
 
         try {
             Class<?> cleanerClass = Class.forName("jdk.internal.ref.Cleaner");
-            cleanMethod = cleanerClass.getMethod("clean");
+            return cleanerClass.getMethod("clean");
         } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Cannot find Cleaner to use.", e);
+            return null;
         }
     }
 }
