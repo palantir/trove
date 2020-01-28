@@ -161,7 +161,11 @@ public abstract class AbstractOffheapArray {
         }
     }
 
-    private static void initializeCreateMethod() {
+    private static synchronized void initializeCreateMethod() {
+        if (createMethod != null) {
+            return;
+        }
+
         try {
             Class<?> cleaner = Class.forName("sun.misc.Cleaner");
             createMethod = cleaner.getMethod("create", Object.class, Runnable.class);
@@ -189,7 +193,11 @@ public abstract class AbstractOffheapArray {
         }
     }
 
-    private static void initializeCleanMethod() {
+    private static synchronized void initializeCleanMethod() {
+        if (cleanMethod != null) {
+            return;
+        }
+
         try {
             Class<?> cleanerClass = Class.forName("sun.misc.Cleaner");
             cleanMethod = cleanerClass.getMethod("clean");
