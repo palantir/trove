@@ -7,4 +7,5 @@ jobs:
       - checkout
       - run: ant -f build.xml clean
       - run: ant -f build.xml generate
+      - run: ant -f build.xml test
       - run: ant -f build.xml jar
