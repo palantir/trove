@@ -76,17 +76,17 @@ public class TPrimitiveOffheapArrayTest extends TestCase {
         }
     }
 
-//    public void testResizeStress() {
-//        list.clear();
-//        for (int i = 1; i < 1000000; i++) {
-//            list.resize(5 * i);
-//            list.put(5 * i - 1, i);
-//        }
-//        for (int i = 1; i < 1000000; i++) {
-//            assertEquals(0, list.get(5 * i - 2));
-//            assertEquals(i, list.get(5 * i - 1));
-//        }
-//    }
+    public void testResizeStress() {
+        list.clear();
+        for (int i = 1; i < 1000000; i++) {
+            list.resize(5 * i);
+            list.put(5 * i - 1, i);
+        }
+        for (int i = 1; i < 1000000; i++) {
+            assertEquals(0, list.get(5 * i - 2));
+            assertEquals(i, list.get(5 * i - 1));
+        }
+    }
 
     public void testClear() {
         list.clear();
