@@ -20,17 +20,16 @@
 
 <project name="Trove4j" default="jar" basedir=".">
     <description>Builds the Trove4j library</description>
-    
+
     <property name="Name" value="Trove"/>
     <property name="name" value="trove"/>
     <property name="year" value="2001-2011"/>
-    
+
     <property name="debug" value="on"/>
     <property name="deprecation" value="on"/>
 
-    
     <property name="jar_name" value="trove.jar"/>
-    
+
     <property name="output.dir" value="output"/>
     <property name="output.dest" value="${output.dir}/classes"/>
     <property name="output.tests" value="${output.dir}/test_classes"/>
@@ -43,7 +42,7 @@
     <property name="output.benchmarks" value="${output.dir}/benchmark_classes"/>
 
     <property name="dist.root" value="${output.dir}/dist"/>
-    
+
     <property name="src" value="src"/>
     <property name="generator_src" value="generator_src"/>
     <property name="generator_test" value="generator_test"/>
@@ -52,7 +51,6 @@
     <property name="idea" value="idea"/>
     <property name="templates" value="templates"/>
 
-    
     <!-- =============================================================== -->
     <!-- The main target for building a release. This will perform a     -->
     <!-- "clean" followed by a "dist".                                   -->
@@ -78,16 +76,16 @@
         <antcall target="-maven-files"/>
 
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Clean all output                                                -->
     <!-- =============================================================== -->
     <target name="clean" description="Remove all generated/compiled files">
         <delete dir="${output.dir}"/>
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Generate classes based on templates.                            -->
     <!-- =============================================================== -->
@@ -101,8 +99,8 @@
             </classpath>
         </java>
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Compile the source directory.                                   -->
     <!-- =============================================================== -->
@@ -115,8 +113,8 @@
             <src path="${output.generated}"/>
         </javac>
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Build the main jar.                                             -->
     <!-- =============================================================== -->
@@ -136,8 +134,8 @@
             </manifest>
         </jar>
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Places files to prepare for a release.                          -->
     <!-- This build javadocs and copies misc. files.                     -->
@@ -176,21 +174,21 @@
             <fileset dir="${src}"/>
             <fileset dir="${output.generated}"/>
         </jar>
-        
+
         <!-- Copy javadocs & libs -->
         <copy todir="${dist.root}/${version}">
             <fileset dir="${output.dir}" includes="lib/**,javadocs/**" />
         </copy>
         <copy todir="${dist.root}/${version}/lib" file="${lib}/junit.jar"/>
-        
+
         <!-- Misc. Files -->
         <copy todir="${dist.root}/${version}">
 			<fileset dir="${basedir}" includes="*.txt"/>
 		</copy>
         <copy todir="${dist.root}/${version}" file="build.xml"/>
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Create the javadocs.                                            -->
     <!-- =============================================================== -->
@@ -212,8 +210,8 @@
             </sourcepath>
         </javadoc>
     </target>
-    
-    
+
+
     <!-- =============================================================== -->
     <!-- Compile and run the unit tests.                                 -->
     <!-- =============================================================== -->
@@ -225,12 +223,12 @@
                 <include name="**/*.obj"/>
             </fileset>
         </copy>
-        
+
         <!-- Execute JUnit tests -->
         <junit printsummary="yes" showoutput="yes"
             errorProperty="test.failed" failureProperty="test.failed"
             forkmode="once">
-            
+
             <classpath path="${output.tests}:${output.dest}:${lib}/junit.jar"/>
 
 			<classpath>
@@ -277,7 +275,7 @@
                 <fileset dir="${lib}">
                     <include name="*.jar"/>
                 </fileset>
-                
+
                 <pathelement location="${output.dest}"/>
                 <pathelement location="${output.generator_classes}"/>
                 <pathelement location="${output.tests}"/>
@@ -330,7 +328,7 @@
         <echo message="Java version: ${java.version}"/>
 
         <tstamp/>
-    
+
         <mkdir dir="${output.dir}"/>
         <mkdir dir="${output.generator_classes}"/>
         <mkdir dir="${output.dest}"/>
@@ -346,7 +344,7 @@
     <!-- =================================================================== -->
     <!-- Targets related to benchmarks.                                      -->
     <!-- =================================================================== -->
-    
+
     <target name="-build_tests" depends="-init">
         <javac destdir="${output.tests}" debug="${debug}" target="1.8">
             <src path="${test_src}"/>
@@ -362,7 +360,7 @@
         <!-- See if third party libraries are available -->
         <available classname="cern.colt.map.OpenIntObjectHashMap"
             property="colt.available">
-            
+
             <classpath>
                 <fileset dir="${lib}">
                     <include name="*.jar"/>
@@ -381,14 +379,13 @@
             </classpath>
         </available>
         <antcall target="-build_trove2_benchmarks"/>
-        
     </target>
 
 
     <target name="-build_colt_benchmarks" depends="-init" if="colt.available">
         <javac destdir="${output.tests}" debug="${debug}" target="1.8">
             <src path="${test_src}"/>
-            
+
             <include name="gnu/trove/benchmark/colt/**"/>
 
             <classpath>
