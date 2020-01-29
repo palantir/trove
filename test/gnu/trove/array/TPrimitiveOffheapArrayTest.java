@@ -116,11 +116,11 @@ public class TPrimitiveOffheapArrayTest extends TestCase {
         }
     }
 
-//    public void testGcStress() {
-//        for (int i = 0; i < 100; i++) {
-//            new TIntOffheapArray(50000000);
-//        }
-//    }
+    public void testGcStress() {
+        for (int i = 0; i < 100; i++) {
+            new TIntOffheapArray(50000000);
+        }
+    }
 
     public void testToArray() {
         int[] array = new int[10];
