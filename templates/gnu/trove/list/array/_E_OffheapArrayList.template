@@ -339,6 +339,7 @@ public class T#E#OffheapArrayList implements T#E#List, Externalizable {
     @Override
     public boolean addAll( Collection<? extends #ET#> collection ) {
         boolean changed = false;
+        ensureCapacity( _pos + collection.size() );
         for ( #ET# element : collection ) {
             #e# e = element.#e#Value();
             if ( add( e ) ) {
@@ -353,6 +354,7 @@ public class T#E#OffheapArrayList implements T#E#List, Externalizable {
     @Override
     public boolean addAll( T#E#Collection collection ) {
         boolean changed = false;
+        ensureCapacity( _pos + collection.size() );
         T#E#Iterator iter = collection.iterator();
         while ( iter.hasNext() ) {
             #e# element = iter.next();
@@ -368,6 +370,7 @@ public class T#E#OffheapArrayList implements T#E#List, Externalizable {
     @Override
     public boolean addAll( #e#[] array ) {
         boolean changed = false;
+        ensureCapacity( _pos + array.length );
         for ( #e# element : array ) {
             if ( add( element ) ) {
                 changed = true;
