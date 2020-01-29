@@ -109,7 +109,7 @@
     <target name="compile" depends="generate">
         <javac destdir="${output.dest}"
             classpath="${lib}/junit.jar"
-            debug="${debug}" target="1.5">
+            debug="${debug}" target="1.8">
 
             <src path="${src}"/>
             <src path="${output.generated}"/>
