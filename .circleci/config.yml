@@ -1,0 +1,10 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: 'circleci/openjdk:8u222-stretch-node'
+    steps:
+      - checkout
+      - run: ant -f build.xml clean
+      - run: ant -f build.xml generate
+      - run: ant -f build.xml jar
