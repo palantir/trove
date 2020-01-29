@@ -109,7 +109,7 @@
     <target name="compile" depends="generate">
         <javac destdir="${output.dest}"
             classpath="${lib}/junit.jar"
-            debug="${debug}" target="1.5">
+            debug="${debug}" target="1.8">
 
             <src path="${src}"/>
             <src path="${output.generated}"/>
@@ -227,7 +227,7 @@
         </copy>
         
         <!-- Execute JUnit tests -->
-        <junit printsummary="no" showoutput="no"
+        <junit printsummary="yes" showoutput="yes"
             errorProperty="test.failed" failureProperty="test.failed"
             forkmode="once">
             
@@ -257,7 +257,7 @@
         description="Run benchmark suite.">
 
         <mkdir dir="${output.benchmarks}"/>
-        <javac destdir="${output.benchmarks}" debug="${debug}" target="1.5">
+        <javac destdir="${output.benchmarks}" debug="${debug}" target="1.8">
             <src path="benchmarks/src"/>
             <exclude name="gnu/trove/benchmark/colt/**"/>
             <exclude name="gnu/trove/benchmark/compare/**"/>
@@ -319,7 +319,7 @@
             destdir="${output.generator_classes}"
             defaultexcludes="yes"
             debug="${debug}"
-            source="1.5" target="1.5"/>
+            source="1.8" target="1.8"/>
     </target>
 
 
@@ -348,7 +348,7 @@
     <!-- =================================================================== -->
     
     <target name="-build_tests" depends="-init">
-        <javac destdir="${output.tests}" debug="${debug}" target="1.5">
+        <javac destdir="${output.tests}" debug="${debug}" target="1.8">
             <src path="${test_src}"/>
             <exclude name="gnu/trove/benchmark/colt/**"/>
             <exclude name="gnu/trove/benchmark/trove2/**"/>
@@ -386,7 +386,7 @@
 
 
     <target name="-build_colt_benchmarks" depends="-init" if="colt.available">
-        <javac destdir="${output.tests}" debug="${debug}" target="1.5">
+        <javac destdir="${output.tests}" debug="${debug}" target="1.8">
             <src path="${test_src}"/>
             
             <include name="gnu/trove/benchmark/colt/**"/>
@@ -402,7 +402,7 @@
     </target>
 
     <target name="-build_trove2_benchmarks" depends="-init" if="colt.available">
-        <javac destdir="${output.tests}" debug="${debug}" target="1.5">
+        <javac destdir="${output.tests}" debug="${debug}" target="1.8">
             <src path="${test_src}"/>
 
             <include name="gnu/trove/benchmark/trove2/**"/>
