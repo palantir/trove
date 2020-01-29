@@ -1,6 +1,7 @@
-version: 2
+version: 2.1
 jobs:
   build:
+    resource_class: large
     docker:
       - image: 'circleci/openjdk:8u222-stretch-node'
     steps:
