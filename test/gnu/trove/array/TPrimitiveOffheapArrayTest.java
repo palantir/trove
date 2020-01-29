@@ -1,5 +1,8 @@
 package gnu.trove.array;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 public class TPrimitiveOffheapArrayTest extends TestCase {
@@ -105,14 +108,14 @@ public class TPrimitiveOffheapArrayTest extends TestCase {
         }
     }
 
-//    public void testFreeStress() {
-//        List<TIntOffheapArray> list = new ArrayList<TIntOffheapArray>();
-//        for (int i = 0; i < 10000; i++) {
-//            list.add(new TIntOffheapArray(1000000 + 100 * i));
-//            list.get(i).free();
-//        }
-//    }
-//
+    public void testFreeStress() {
+        List<TIntOffheapArray> list = new ArrayList<TIntOffheapArray>();
+        for (int i = 0; i < 10000; i++) {
+            list.add(new TIntOffheapArray(1000000 + 100 * i));
+            list.get(i).free();
+        }
+    }
+
 //    public void testGcStress() {
 //        for (int i = 0; i < 100; i++) {
 //            new TIntOffheapArray(50000000);
