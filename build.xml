@@ -229,7 +229,7 @@
         <!-- Execute JUnit tests -->
         <junit printsummary="yes" showoutput="yes"
             errorProperty="test.failed" failureProperty="test.failed"
-            forkmode="once" maxmemory="1g">
+            forkmode="once" maxmemory="4g">
             
             <classpath path="${output.tests}:${output.dest}:${lib}/junit.jar"/>
 
