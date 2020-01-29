@@ -1,8 +1,5 @@
 package gnu.trove.array;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.TestCase;
 
 public class TPrimitiveOffheapArrayTest extends TestCase {
@@ -76,17 +73,17 @@ public class TPrimitiveOffheapArrayTest extends TestCase {
         }
     }
 
-    public void testResizeStress() {
-        list.clear();
-        for (int i = 1; i < 1000000; i++) {
-            list.resize(5 * i);
-            list.put(5 * i - 1, i);
-        }
-        for (int i = 1; i < 1000000; i++) {
-            assertEquals(0, list.get(5 * i - 2));
-            assertEquals(i, list.get(5 * i - 1));
-        }
-    }
+//    public void testResizeStress() {
+//        list.clear();
+//        for (int i = 1; i < 1000000; i++) {
+//            list.resize(5 * i);
+//            list.put(5 * i - 1, i);
+//        }
+//        for (int i = 1; i < 1000000; i++) {
+//            assertEquals(0, list.get(5 * i - 2));
+//            assertEquals(i, list.get(5 * i - 1));
+//        }
+//    }
 
     public void testClear() {
         list.clear();
@@ -108,19 +105,19 @@ public class TPrimitiveOffheapArrayTest extends TestCase {
         }
     }
 
-    public void testFreeStress() {
-        List<TIntOffheapArray> list = new ArrayList<TIntOffheapArray>();
-        for (int i = 0; i < 10000; i++) {
-            list.add(new TIntOffheapArray(1000000 + 100 * i));
-            list.get(i).free();
-        }
-    }
-
-    public void testGcStress() {
-        for (int i = 0; i < 100; i++) {
-            new TIntOffheapArray(50000000);
-        }
-    }
+//    public void testFreeStress() {
+//        List<TIntOffheapArray> list = new ArrayList<TIntOffheapArray>();
+//        for (int i = 0; i < 10000; i++) {
+//            list.add(new TIntOffheapArray(1000000 + 100 * i));
+//            list.get(i).free();
+//        }
+//    }
+//
+//    public void testGcStress() {
+//        for (int i = 0; i < 100; i++) {
+//            new TIntOffheapArray(50000000);
+//        }
+//    }
 
     public void testToArray() {
         int[] array = new int[10];
