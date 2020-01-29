@@ -227,7 +227,7 @@
         </copy>
         
         <!-- Execute JUnit tests -->
-        <junit printsummary="no" showoutput="no"
+        <junit printsummary="no" showoutput="yes"
             errorProperty="test.failed" failureProperty="test.failed"
             forkmode="once">
             
