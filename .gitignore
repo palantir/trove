@@ -1,1 +1,6 @@
 output/
+out/
+
+.idea/
+*.ipr
+*.iml
