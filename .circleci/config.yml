@@ -17,3 +17,20 @@ jobs:
       - run: ant -f build.xml jar
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
+  buildJava11:
+    resource_class: large
+    docker:
+      - image: 'circleci/openjdk:11-jdk-stretch-node-browsers-legacy'
+    environment:
+      CIRCLE_TEST_REPORTS: /home/circleci/junit
+      CIRCLE_ARTIFACTS: /home/circleci/artifacts
+      GRADLE_OPTS: -Dorg.gradle.jvmargs='-Xms6144m -Xmx6144m'
+      _JAVA_OPTIONS: -XX:ActiveProcessorCount=4 -XX:ErrorFile=/home/circleci/artifacts/hs_err_pid%p.log -XX:HeapDumpPath=/home/circleci/artifacts
+    steps:
+      - checkout
+      - run: ant -f build.xml clean
+      - run: ant -f build.xml generate
+      - run: ant -f build.xml test
+      - run: ant -f build.xml jar
+      - store_test_results: { path: ~/junit }
+      - store_artifacts: { path: ~/artifacts }
