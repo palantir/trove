@@ -1,11 +1,11 @@
 package gnu.trove.array;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.concurrent.atomic.AtomicLong;
 
-import sun.misc.Cleaner;
 import sun.misc.Unsafe;
 
 /**
@@ -17,6 +17,9 @@ import sun.misc.Unsafe;
  */
 public abstract class AbstractOffheapArray {
     protected static final Unsafe UNSAFE;
+
+    private static final Method createMethod = initializeCreateMethod();
+    private static final Method cleanMethod = initializeCleanMethod();
 
     private static class Deallocator implements Runnable {
 
@@ -41,8 +44,13 @@ public abstract class AbstractOffheapArray {
      * offheap array becomes unreachable.
      * <p>
      * http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/sun/misc/Cleaner.java
+     *
+     * Need to keep it as a generic Object so that it can be assigned a type at runtime using reflection.
+     * Unfortunately, starting with Java 9, sun.misc.Cleaner moved to jdk.internal.ref.Cleaner, so in
+     * order for this library to be usable for both Java 8 and Java 9+, it must be able to decide which
+     * to use at runtime.
      */
-    private final Cleaner cleaner;
+    private final Object cleaner;
     private final AtomicLong boxedAddress;
     protected long address;
     protected long capacity;
@@ -53,7 +61,7 @@ public abstract class AbstractOffheapArray {
         }
         address = UNSAFE.allocateMemory(capacity);
         boxedAddress = new AtomicLong(address);
-        cleaner = Cleaner.create(this, new Deallocator(boxedAddress));
+        cleaner = createCleaner(this, new Deallocator(boxedAddress));
         UNSAFE.setMemory(address, capacity, (byte) 0);
         this.capacity = capacity;
     }
@@ -91,7 +99,7 @@ public abstract class AbstractOffheapArray {
         // Cleaner is guaranteed to run its runnable at most once, so its fine to
         // call free multiple times, and nothing additional will happen when this
         // array becomes unreachable.
-        cleaner.clean();
+        clean();
     }
 
     public abstract long capacity();
@@ -140,5 +148,61 @@ public abstract class AbstractOffheapArray {
                 }
             }
         });
+    }
+
+    private static Object createCleaner(Object obj, Runnable cleanUpRunnable) {
+        if (createMethod == null) {
+            throw new IllegalStateException("Was not able to find Cleaner#create method to use.");
+        }
+
+        try {
+            return createMethod.invoke(null, obj, cleanUpRunnable);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not create a new cleaner.", e);
+        }
+    }
+
+    private void clean() {
+        if (cleanMethod == null) {
+            throw new IllegalStateException("Was not able to find Cleaner#clean to use.");
+        }
+
+        try {
+            cleanMethod.invoke(cleaner);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not invoke clean method.", e);
+        }
+    }
+
+    private static Method initializeCreateMethod() {
+        try {
+            Class<?> cleaner = Class.forName("sun.misc.Cleaner");
+            return cleaner.getMethod("create", Object.class, Runnable.class);
+        } catch (ReflectiveOperationException e) {
+            // means we are on java 9+, try different class
+        }
+
+        try {
+            Class<?> cleaner = Class.forName("jdk.internal.ref.Cleaner");
+            return cleaner.getMethod("create", Object.class, Runnable.class);
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+    }
+
+    private static Method initializeCleanMethod() {
+        try {
+            Class<?> cleanerClass = Class.forName("sun.misc.Cleaner");
+            return cleanerClass.getMethod("clean");
+        } catch (ReflectiveOperationException e) {
+            // means we are on java 9+, try different class
+        }
+
+        try {
+            Class<?> cleanerClass = Class.forName("jdk.internal.ref.Cleaner");
+            return cleanerClass.getMethod("clean");
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
     }
 }
