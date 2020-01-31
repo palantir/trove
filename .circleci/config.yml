@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  unit-test-8:
     resource_class: large
     docker:
       - image: 'circleci/openjdk:8u222-stretch-node'
@@ -17,10 +17,10 @@ jobs:
       - run: ant -f build.xml jar
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
-  buildJava11:
+  unit-test-11:
     resource_class: large
     docker:
-      - image: 'circleci/openjdk:11-jdk-stretch-node-browsers-legacy'
+      - image: 'circleci/openjdk:11-node'
     environment:
       CIRCLE_TEST_REPORTS: /home/circleci/junit
       CIRCLE_ARTIFACTS: /home/circleci/artifacts
@@ -34,3 +34,11 @@ jobs:
       - run: ant -f build.xml jar
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
+workflows:
+  version: 2
+  build:
+    jobs:
+      - unit-test-8:
+          filters: { tags: { only: /.*/ } }
+      - unit-test-11:
+          filters: { tags: { only: /.*/ } }
