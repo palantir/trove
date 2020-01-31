@@ -289,18 +289,18 @@
         <mkdir dir="${dist.root}/maven"/>
 
         <copy file="${dist.root}/${version}/${name}-${version}-src.jar"
-              tofile="${dist.root}/maven/trove4j-${version}-sources.jar"/>
+              tofile="${dist.root}/maven/trove3-${version}-sources.jar"/>
 
         <copy file="${dist.root}/${version}/lib/${name}-${version}.jar"
-              tofile="${dist.root}/maven/trove4j-${version}.jar"/>
+              tofile="${dist.root}/maven/trove3-${version}.jar"/>
 
-        <jar destfile="${dist.root}/maven/trove4j-${version}-javadoc.jar">
+        <jar destfile="${dist.root}/maven/trove3-${version}-javadoc.jar">
             <fileset dir="${dist.root}/${version}/javadocs" includes="**"/>
         </jar>
 
         <copy file="resources/maven-manual-deploy-pom.xml"
-              tofile="${dist.root}/maven/trove4j-${version}.pom"/>
-        <replace file="${dist.root}/maven/trove4j-${version}.pom"
+              tofile="${dist.root}/maven/trove3-${version}.pom"/>
+        <replace file="${dist.root}/maven/trove3-${version}.pom"
                  token="###VERSION###" value="${version}"/>
     </target>
 
