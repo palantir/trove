@@ -45,10 +45,9 @@
 
     <property name="src" value="src"/>
     <property name="generator_src" value="generator_src"/>
-    <property name="generator_test" value="generator_test"/>
+    <property name="generator_test" value="generator_src"/>
     <property name="test_src" value="test"/>
     <property name="lib" value="lib"/>
-    <property name="idea" value="idea"/>
     <property name="templates" value="templates"/>
 
     <!-- =============================================================== -->
@@ -164,9 +163,6 @@
         </copy>
         <copy todir="${dist.root}/${version}/generator_test">
             <fileset dir="${generator_test}"/>
-        </copy>
-        <copy todir="${dist.root}/${version}/idea">
-            <fileset dir="${idea}"/>
         </copy>
 
         <!-- Build a source jar -->
