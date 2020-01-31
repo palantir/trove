@@ -51,5 +51,5 @@ workflows:
       - unit-test-11:
           filters: { tags: { only: /.*/ } }
       - publish:
-          requires: [ unit-test, unit-test-11 ]
+          requires: [ unit-test-8, unit-test-11 ]
           filters: { tags: { only: /.*/ }, branches: { only: master } }
