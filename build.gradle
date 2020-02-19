@@ -38,6 +38,11 @@ task buildGenerator(type: JavaCompile) {
     targetCompatibility = 1.8
 }
 
+// add output directory to be cleaned
+clean.doFirst {
+    delete outputDir
+}
+
 // setup intellij to work with generated files
 idea {
     module {
