@@ -8,3 +8,40 @@ repositories {
 dependencies {
     testCompile 'junit:junit:4.12'
 }
+
+def outputDir = 'output'
+def outputGeneratorClasses = "${outputDir}/generator_classes"
+def outputGenerated = "${outputDir}/gen_src"
+def outputDest = "${outputDir}/classes"
+def outputTests = "${outputDir}/test_classes"
+def outputLib = "${outputDir}/lib"
+def distRoot = "${outputDir}/dist"
+
+def templates = "templates"
+def generatorSrc = "generator_src"
+
+task generate(type: JavaExec, dependsOn: [':buildGenerator', ':initDirectories']) {
+    classpath = files(outputGeneratorClasses)
+    main = 'gnu.trove.generator.Generator'
+    args templates, outputGenerated
+}
+
+task buildGenerator(type: JavaCompile, dependsOn: ':initDirectories') {
+    classpath = files(generatorSrc)
+    source = generatorSrc
+    destinationDirectory = file(outputGeneratorClasses)
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+task initDirectories {
+    doLast {
+        mkdir outputDir
+        mkdir outputGeneratorClasses
+        mkdir outputDest
+        mkdir outputTests
+        mkdir "${outputGenerated}/gnu/trove"
+        mkdir outputLib
+        mkdir distRoot
+    }
+}
