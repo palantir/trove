@@ -24,30 +24,18 @@ def generatorSrc = "generator_src"
 sourceSets.main.java.srcDirs += outputGenerated
 
 // logic for generating sources
-task generate(type: JavaExec, dependsOn: [':buildGenerator', ':initDirectories']) {
+task generate(type: JavaExec, dependsOn: ':buildGenerator') {
     classpath = files(outputGeneratorClasses)
     main = 'gnu.trove.generator.Generator'
     args templates, outputGenerated
 }
 
-task buildGenerator(type: JavaCompile, dependsOn: ':initDirectories') {
+task buildGenerator(type: JavaCompile) {
     classpath = files(generatorSrc)
     source = generatorSrc
     destinationDirectory = file(outputGeneratorClasses)
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
-}
-
-task initDirectories {
-    doLast {
-        mkdir outputDir
-        mkdir outputGeneratorClasses
-        mkdir outputDest
-        mkdir outputTests
-        mkdir "${outputGenerated}/gnu/trove"
-        mkdir outputLib
-        mkdir distRoot
-    }
 }
 
 // setup intellij to work with generated files
