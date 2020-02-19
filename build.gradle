@@ -20,6 +20,10 @@ def distRoot = "${outputDir}/dist"
 def templates = "templates"
 def generatorSrc = "generator_src"
 
+// add generated sources to classpath for compilation
+sourceSets.main.java.srcDirs += outputGenerated
+
+// logic for generating sources
 task generate(type: JavaExec, dependsOn: [':buildGenerator', ':initDirectories']) {
     classpath = files(outputGeneratorClasses)
     main = 'gnu.trove.generator.Generator'
@@ -49,7 +53,10 @@ task initDirectories {
 // setup intellij to work with generated files
 idea {
     module {
-        sourceDirs += file(outputGenerated)
+        generatedSourceDirs += file(outputGenerated)
     }
 }
+
+// setup task dependencies
 tasks.idea.dependsOn generate
+tasks.compileJava.dependsOn generate
