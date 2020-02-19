@@ -45,3 +45,11 @@ task initDirectories {
         mkdir distRoot
     }
 }
+
+// setup intellij to work with generated files
+idea {
+    module {
+        sourceDirs += file(outputGenerated)
+    }
+}
+tasks.idea.dependsOn generate
