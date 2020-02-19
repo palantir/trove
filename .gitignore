@@ -4,5 +4,6 @@ out/
 .idea/
 *.ipr
 *.iml
+*.iws
 
 .gradle
