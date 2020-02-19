@@ -11,10 +11,8 @@ jobs:
       _JAVA_OPTIONS: -XX:ActiveProcessorCount=4 -XX:ErrorFile=/home/circleci/artifacts/hs_err_pid%p.log -XX:HeapDumpPath=/home/circleci/artifacts
     steps:
       - checkout
-      - run: ant -f build.xml clean
-      - run: ant -f build.xml generate
-      - run: ant -f build.xml test
-      - run: ant -f build.xml jar
+      - run: ./gradlew clean
+      - run: ./gradlew test
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
   unit-test-11:
@@ -28,10 +26,8 @@ jobs:
       _JAVA_OPTIONS: -XX:ActiveProcessorCount=4 -XX:ErrorFile=/home/circleci/artifacts/hs_err_pid%p.log -XX:HeapDumpPath=/home/circleci/artifacts
     steps:
       - checkout
-      - run: ant -f build.xml clean
-      - run: ant -f build.xml generate
-      - run: ant -f build.xml test
-      - run: ant -f build.xml jar
+      - run: ./gradlew clean
+      - run: ./gradlew test
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
 workflows:
