@@ -42,7 +42,7 @@ jobs:
       - checkout
       - attach_workspace: { at: /home/circleci }
       - deploy:
-          command: ./gradlew --parallel --stacktrace --continue publish -x javadoc
+          command: ./gradlew --parallel --stacktrace --continue publish
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
 workflows:

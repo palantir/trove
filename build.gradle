@@ -30,7 +30,6 @@ apply plugin: 'nebula.maven-developer'
 apply plugin: 'nebula.maven-manifest'
 apply plugin: 'nebula.info-scm'
 apply plugin: 'nebula.maven-scm'
-apply plugin: 'nebula.javadoc-jar'
 apply plugin: 'nebula.source-jar'
 
 /////////////////////////
