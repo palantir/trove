@@ -1,6 +1,42 @@
+//////////////////////////////
+// Buildscript Dependencies //
+//////////////////////////////
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://palantir.bintray.com/releases/' }
+    }
+
+    dependencies {
+        //classpath 'com.palantir.gradle.revapi:gradle-revapi:1.2.0'
+        classpath 'com.netflix.nebula:gradle-info-plugin:7.1.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.netflix.nebula:nebula-publishing-plugin:17.0.5'
+    }
+}
+
+/////////////
+// Plugins //
+/////////////
 apply plugin: 'java'
 apply plugin: 'idea'
 
+// intentionally not applying nebula.maven-publish, but most of its constituent
+// plugins, because we do _not_ want nebula.maven-compile-only
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+apply plugin: 'nebula.maven-nebula-publish'
+apply plugin: 'nebula.maven-base-publish'
+apply plugin: 'nebula.maven-developer'
+apply plugin: 'nebula.maven-manifest'
+apply plugin: 'nebula.info-scm'
+apply plugin: 'nebula.maven-scm'
+apply plugin: 'nebula.javadoc-jar'
+apply plugin: 'nebula.source-jar'
+
+/////////////////////////
+// Module Dependencies //
+/////////////////////////
 repositories {
     jcenter()
 }
@@ -8,6 +44,12 @@ repositories {
 dependencies {
     testCompile 'junit:junit:4.12'
 }
+
+// keep group/version info the same as from before
+group 'com.palantir.patches.sourceforge'
+version '3.0.3-p6'
+
+///////////////////////////////////////////////////
 
 def outputDir = 'output'
 def outputGeneratorClasses = "${outputDir}/generator_classes"
@@ -20,10 +62,9 @@ def distRoot = "${outputDir}/dist"
 def templates = "templates"
 def generatorSrc = "generator_src"
 
-// add generated sources to classpath for compilation
-sourceSets.main.java.srcDirs += outputGenerated
-
-// logic for generating sources
+////////////////////////
+// Generating sources //
+////////////////////////
 task generate(type: JavaExec, dependsOn: ':buildGenerator') {
     classpath = files(outputGeneratorClasses)
     main = 'gnu.trove.generator.Generator'
@@ -38,10 +79,8 @@ task buildGenerator(type: JavaCompile) {
     targetCompatibility = 1.8
 }
 
-// add output directory to be cleaned
-clean.doFirst {
-    delete outputDir
-}
+// add generated sources to classpath for compilation
+sourceSets.main.java.srcDirs += outputGenerated
 
 // setup intellij to work with generated files
 idea {
@@ -50,6 +89,50 @@ idea {
     }
 }
 
-// setup task dependencies
+clean.doFirst {
+    delete outputDir
+}
+
+////////////////
+// Publishing //
+////////////////
+bintray {
+    user = System.env.BINTRAY_USERNAME
+    key = System.env.BINTRAY_PASSWORD
+    publish = true
+    pkg {
+        repo = 'releases'
+        name = 'trove3'
+        userOrg = 'palantir'
+        licenses = ['Apache-2.0']
+        publications = ['nebula']
+    }
+}
+
+publish.dependsOn bintrayUpload
+bintrayUpload.onlyIf {
+    versionDetails().isCleanTag
+}
+
+// see: https://docs.gradle.org/5.2/userguide/publishing_maven.html#publishing_maven:resolved_dependencies
+// this replaces nebula.maven-resolved-dependencies, which doesn't work with the 'com.gradle.plugin-publish' plugin
+publishing {
+    publications.withType(MavenPublication).configureEach {
+        versionMapping {
+            allVariants {
+                fromResolutionResult()
+            }
+        }
+    }
+}
+
+// turning off module metadata so that all consumers just use regular POMs
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
+///////////////////////
+// Task Dependencies //
+///////////////////////
 tasks.idea.dependsOn generate
 tasks.compileJava.dependsOn generate
