@@ -1,6 +1,12 @@
+*.swp
+
 output/
 out/
+build/
 
 .idea/
 *.ipr
 *.iml
+*.iws
+
+.gradle
