@@ -50,7 +50,7 @@ dependencies {
 
 // keep group/version info the same as from before
 group 'com.palantir.patches.sourceforge'
-version '3.0.3-p6'
+version gitVersion()
 
 ///////////////////////////////////////////////////
 
