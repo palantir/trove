@@ -105,7 +105,7 @@ bintray {
     publish = true
     pkg {
         repo = 'releases'
-        name = 'trove3'
+        name = 'trove'
         userOrg = 'palantir'
         licenses = ['Apache-2.0']
         publications = ['nebula']
