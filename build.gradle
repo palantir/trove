@@ -88,6 +88,9 @@ sourceSets.main.java.srcDirs += outputGenerated
 // setup intellij to work with generated files
 idea {
     module {
+        // need to make sure generated source is a source dir first
+        // before marking it as a generated source dir.
+        sourceDirs += [file(generatorSrc), file(outputGenerated)]
         generatedSourceDirs += file(outputGenerated)
     }
 }
