@@ -8,9 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.netflix.nebula:gradle-info-plugin:7.1.4'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:17.2.1'
+        classpath 'com.palantir.gradle.externalpublish:gradle-external-publish-plugin:0.4.0'
     }
 }
 
@@ -22,12 +20,12 @@ plugins {
     id 'org.inferred.processors' version '3.3.0'
 }
 
+apply plugin: 'com.palantir.external-publish'
 apply plugin: 'java'
 apply plugin: 'idea'
 
 // intentionally not applying nebula.maven-publish, but most of its constituent
 // plugins, because we do _not_ want nebula.maven-compile-only
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 apply plugin: 'nebula.maven-nebula-publish'
 apply plugin: 'nebula.maven-base-publish'
