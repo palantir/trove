@@ -69,6 +69,9 @@ idea {
     }
 }
 
+///////////
+// Tasks //
+///////////
 clean.doFirst {
     delete outputDir
 }
@@ -78,8 +81,10 @@ tasks.withType(GenerateModuleMetadata) {
     enabled = false
 }
 
-///////////////////////
-// Task Dependencies //
-///////////////////////
+// turning off javadocs task because there are too many errors
+tasks.withType(Javadoc) {
+    enabled = false
+}
+
 tasks.idea.dependsOn generate
 tasks.compileJava.dependsOn generate
