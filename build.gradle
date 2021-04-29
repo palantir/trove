@@ -4,8 +4,8 @@
 plugins {
     id 'com.palantir.git-version' version '0.12.3'
     id 'org.inferred.processors' version '3.3.0'
-    id 'com.palantir.external-publish' version '0.4.0'
-    id 'com.palantir.external-publish-jar' version '0.4.0'
+    id 'com.palantir.external-publish' version '1.2.1'
+    id 'com.palantir.external-publish-jar' version '1.2.1'
 
     id 'java'
     id 'idea'
