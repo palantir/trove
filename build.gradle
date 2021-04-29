@@ -1,47 +1,21 @@
-//////////////////////////////
-// Buildscript Dependencies //
-//////////////////////////////
-buildscript {
-    repositories {
-        jcenter()
-        maven { url 'https://palantir.bintray.com/releases/' }
-    }
-
-    dependencies {
-        classpath 'com.netflix.nebula:gradle-info-plugin:7.1.4'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath 'com.netflix.nebula:nebula-publishing-plugin:17.2.1'
-    }
-}
-
 /////////////
 // Plugins //
 /////////////
 plugins {
     id 'com.palantir.git-version' version '0.12.3'
     id 'org.inferred.processors' version '3.3.0'
+    id 'com.palantir.external-publish' version '1.2.1'
+    id 'com.palantir.external-publish-jar' version '1.2.1'
+
+    id 'java'
+    id 'idea'
 }
-
-apply plugin: 'java'
-apply plugin: 'idea'
-
-// intentionally not applying nebula.maven-publish, but most of its constituent
-// plugins, because we do _not_ want nebula.maven-compile-only
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
-apply plugin: 'nebula.maven-nebula-publish'
-apply plugin: 'nebula.maven-base-publish'
-apply plugin: 'nebula.maven-developer'
-apply plugin: 'nebula.maven-manifest'
-apply plugin: 'nebula.info-scm'
-apply plugin: 'nebula.maven-scm'
-apply plugin: 'nebula.source-jar'
 
 /////////////////////////
 // Module Dependencies //
 /////////////////////////
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -95,41 +69,11 @@ idea {
     }
 }
 
+///////////
+// Tasks //
+///////////
 clean.doFirst {
     delete outputDir
-}
-
-////////////////
-// Publishing //
-////////////////
-bintray {
-    user = System.env.BINTRAY_USERNAME
-    key = System.env.BINTRAY_PASSWORD
-    publish = true
-    pkg {
-        repo = 'releases'
-        name = 'trove'
-        userOrg = 'palantir'
-        licenses = ['Apache-2.0']
-        publications = ['nebula']
-    }
-}
-
-publish.dependsOn bintrayUpload
-bintrayUpload.onlyIf {
-    versionDetails().isCleanTag
-}
-
-// see: https://docs.gradle.org/5.2/userguide/publishing_maven.html#publishing_maven:resolved_dependencies
-// this replaces nebula.maven-resolved-dependencies, which doesn't work with the 'com.gradle.plugin-publish' plugin
-publishing {
-    publications.withType(MavenPublication).configureEach {
-        versionMapping {
-            allVariants {
-                fromResolutionResult()
-            }
-        }
-    }
 }
 
 // turning off module metadata so that all consumers just use regular POMs
@@ -137,8 +81,10 @@ tasks.withType(GenerateModuleMetadata) {
     enabled = false
 }
 
-///////////////////////
-// Task Dependencies //
-///////////////////////
+// turning off javadocs task because there are too many errors
+tasks.withType(Javadoc) {
+    enabled = false
+}
+
 tasks.idea.dependsOn generate
 tasks.compileJava.dependsOn generate
