@@ -45,6 +45,13 @@ jobs:
           command: ./gradlew --parallel --stacktrace --continue publish
       - store_test_results: { path: ~/junit }
       - store_artifacts: { path: ~/artifacts }
+  circle-all:
+    docker:
+    - image: busybox:1.34.1
+    resource_class: small
+    steps:
+    - run:
+        command: echo "All required jobs finished successfully"
 workflows:
   version: 2
   build:
@@ -56,3 +63,10 @@ workflows:
       - publish:
           requires: [ unit-test-8, unit-test-11 ]
           filters: { tags: { only: /.*/ }, branches: { only: master } }
+      - circle-all:
+          requires:
+          - unit-test-11
+          - unit-test-8
+          filters:
+            tags:
+              only: /.*/
